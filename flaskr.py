@@ -8,10 +8,10 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
-    DATABASE='/home/begood/flaskr/tmp/flaskr.db',
-    SECRET_KEY='development key',
-    USERNAME='admin',
-    PASSWORD='default'
+    DATABASE=os.path.join(os.path.dirname(__file__), '/tmp/flaskr.db'),
+    SECRET_KEY='******',
+    USERNAME='******',
+    PASSWORD='******'
 ))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
@@ -37,7 +37,8 @@ def close_db(error):
 
 def init_db():
     with closing(connect_db()) as db:
-        with app.open_resource('/home/begood/flaskr/schema.sql', mode='r') as f:
+        with app.open_resource(os.path.dirname(__file__) + 'schema.sql',
+                               mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
 
@@ -90,3 +91,7 @@ def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
     return redirect(url_for('show_entries'))
+
+
+if __name__ == "__main__":
+    app.run()
